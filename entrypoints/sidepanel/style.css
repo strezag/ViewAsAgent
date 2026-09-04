@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/*
+ * Theming works by redefining Tailwind's colour variables rather than by adding
+ * `dark:` variants to ~300 class usages. Tailwind v4 compiles `bg-slate-950` to
+ * `background-color: var(--color-slate-950)`, and opacity modifiers compile to
+ * `color-mix(… var(--color-*) …)` inside an `@supports` guard that Chrome takes,
+ * so every surface in the panel follows these variables.
+ *
+ * Both palettes are written out as hex rather than inheriting Tailwind's oklch
+ * defaults. That costs a few lines and buys three things: the contrast of the
+ * dark theme becomes something we control, both themes are auditable in one
+ * place, and lib/theme.test.ts can parse real values to assert WCAG ratios.
+ *
+ * In the dark palette high slate numbers are surfaces and low numbers are text.
+ * The light palette inverts that relationship — but it is not a mirror, because
+ * a mirrored ramp puts text at contrasts that fail AA. The values below are
+ * chosen for contrast and verified by test.
+ */
+
+:root {
+  /* ---- Dark palette (the authored default) --------------------------- */
+  --color-slate-950: #020617; /* page */
+  --color-slate-900: #0f172a; /* card */
+  --color-slate-800: #1e293b; /* border, bar track, code chip */
+  --color-slate-700: #334155; /* strong border, pressed state */
+  /* Tailwind's slate-600 (#475569) sits at ~3.2:1 on the card here, well below
+     AA, and it carries real text — "−35" point costs, "not evaluated". Both the
+     faint and muted tones are lifted until they clear 4.5:1 on both surfaces,
+     while staying far enough apart to remain distinguishable. */
+  --color-slate-600: #8595ab; /* faint text, dots */
+  --color-slate-500: #a9b6c8; /* muted text */
+  --color-slate-400: #cbd5e1; /* secondary text */
+  --color-slate-300: #e2e8f0; /* body text */
+  --color-slate-200: #f1f5f9; /* body base */
+  --color-slate-100: #f8fafc; /* headings */
+
+  --color-sky-600: #0369a1; /* filled button; white text must clear AA */
+  --color-sky-500: #0ea5e9;
+  --color-sky-400: #38bdf8;
+  --color-sky-300: #7dd3fc;
+  --color-emerald-500: #10b981;
+  --color-emerald-400: #34d399;
+  --color-emerald-300: #6ee7b7;
+  --color-amber-500: #f59e0b;
+  --color-amber-400: #fbbf24;
+  --color-amber-300: #fcd34d;
+  --color-amber-200: #fde68a;
+  --color-orange-500: #f97316;
+  --color-orange-400: #fb923c;
+  --color-orange-300: #fdba74;
+  --color-rose-500: #f43f5e;
+  --color-rose-400: #fb7185;
+  --color-rose-300: #fda4af;
+  --color-rose-200: #fecdd3;
+
+  /* ---- Light palette, defined once and aliased below ------------------
+   * Two selectors need these values (the media query and the explicit
+   * override). Defining them once means the two blocks are pure aliases and
+   * cannot drift apart.
+   */
+  --l-slate-950: #eef2f7; /* page */
+  --l-slate-900: #ffffff; /* card */
+  --l-slate-800: #d3dbe5; /* border, bar track, code chip */
+  --l-slate-700: #b3bfcd; /* strong border, pressed state */
+  --l-slate-600: #5d6b80; /* faint text, dots */
+  --l-slate-500: #475569; /* muted text */
+  --l-slate-400: #334155; /* secondary text */
+  --l-slate-300: #1e293b; /* body text */
+  --l-slate-200: #0f172a; /* body base */
+  --l-slate-100: #020617; /* headings */
+
+  /* Accents used as text move to 700/800 weights. The 400s that read well on
+     near-black are around 2:1 on near-white. */
+  --l-sky-600: #0369a1; /* Run button fill, white text on it */
+  --l-sky-500: #0284c7; /* bar fill, focus ring, active tab */
+  --l-sky-400: #0369a1;
+  --l-sky-300: #075985;
+  --l-emerald-500: #059669;
+  --l-emerald-400: #047857;
+  --l-emerald-300: #065f46;
+  --l-amber-500: #a8500a;
+  --l-amber-400: #a8500a;
+  --l-amber-300: #92400e;
+  --l-amber-200: #78350f;
+  --l-orange-500: #ea580c;
+  --l-orange-400: #c2410c;
+  --l-orange-300: #9a3412;
+  --l-rose-500: #e11d48;
+  --l-rose-400: #be123c;
+  --l-rose-300: #9f1239;
+  --l-rose-200: #881337;
+  /* A 40% black shadow reads as a bruise on a light surface. */
+  --l-black: #64748b;
+}
+
+/* Follow the OS unless dark has been chosen explicitly. Doing this in CSS means
+   the first paint is already correct — no flash while storage is read. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --color-slate-950: var(--l-slate-950);
+    --color-slate-900: var(--l-slate-900);
+    --color-slate-800: var(--l-slate-800);
+    --color-slate-700: var(--l-slate-700);
+    --color-slate-600: var(--l-slate-600);
+    --color-slate-500: var(--l-slate-500);
+    --color-slate-400: var(--l-slate-400);
+    --color-slate-300: var(--l-slate-300);
+    --color-slate-200: var(--l-slate-200);
+    --color-slate-100: var(--l-slate-100);
+    --color-sky-600: var(--l-sky-600);
+    --color-sky-500: var(--l-sky-500);
+    --color-sky-400: var(--l-sky-400);
+    --color-sky-300: var(--l-sky-300);
+    --color-emerald-500: var(--l-emerald-500);
+    --color-emerald-400: var(--l-emerald-400);
+    --color-emerald-300: var(--l-emerald-300);
+    --color-amber-500: var(--l-amber-500);
+    --color-amber-400: var(--l-amber-400);
+    --color-amber-300: var(--l-amber-300);
+    --color-amber-200: var(--l-amber-200);
+    --color-orange-500: var(--l-orange-500);
+    --color-orange-400: var(--l-orange-400);
+    --color-orange-300: var(--l-orange-300);
+    --color-rose-500: var(--l-rose-500);
+    --color-rose-400: var(--l-rose-400);
+    --color-rose-300: var(--l-rose-300);
+    --color-rose-200: var(--l-rose-200);
+    --color-black: var(--l-black);
+  }
+}
+
+:root[data-theme='light'] {
+  --color-slate-950: var(--l-slate-950);
+  --color-slate-900: var(--l-slate-900);
+  --color-slate-800: var(--l-slate-800);
+  --color-slate-700: var(--l-slate-700);
+  --color-slate-600: var(--l-slate-600);
+  --color-slate-500: var(--l-slate-500);
+  --color-slate-400: var(--l-slate-400);
+  --color-slate-300: var(--l-slate-300);
+  --color-slate-200: var(--l-slate-200);
+  --color-slate-100: var(--l-slate-100);
+  --color-sky-600: var(--l-sky-600);
+  --color-sky-500: var(--l-sky-500);
+  --color-sky-400: var(--l-sky-400);
+  --color-sky-300: var(--l-sky-300);
+  --color-emerald-500: var(--l-emerald-500);
+  --color-emerald-400: var(--l-emerald-400);
+  --color-emerald-300: var(--l-emerald-300);
+  --color-amber-500: var(--l-amber-500);
+  --color-amber-400: var(--l-amber-400);
+  --color-amber-300: var(--l-amber-300);
+  --color-amber-200: var(--l-amber-200);
+  --color-orange-500: var(--l-orange-500);
+  --color-orange-400: var(--l-orange-400);
+  --color-orange-300: var(--l-orange-300);
+  --color-rose-500: var(--l-rose-500);
+  --color-rose-400: var(--l-rose-400);
+  --color-rose-300: var(--l-rose-300);
+  --color-rose-200: var(--l-rose-200);
+  --color-black: var(--l-black);
+}
+
+/*
+ * Text scaling. Every size in the panel is rem, and Tailwind v4 spacing is rem
+ * too, so setting the root font size scales type and spacing together and the
+ * layout keeps its proportions. main.tsx applies the stored value here before
+ * React renders.
+ */
+html {
+  font-size: 18px; /* the default step; see FONT_STEPS in lib/settings.ts */
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-slate-950);
+  color: var(--color-slate-200);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 0.8125rem;
+}
+
+/* Keep form controls legible in both themes; they do not inherit by default. */
+select,
+option {
+  color-scheme: light dark;
+}
